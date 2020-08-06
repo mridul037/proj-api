@@ -38,12 +38,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 var Joi = require("joi");
-var config = require('../config/appconfig');
+var config = require("../config/appconfig");
 var jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 var bcrypt = require("bcrypt");
+var nodemailer = require("nodemailer");
+//const crypto = require//('crypto');
+var auth_1 = require("../utils/auth");
 var users = [];
 var refreshTokens = [];
+var _a = process.env, host = _a.MAIL_HOST, email = _a.MAIL_EMAIL, password = _a.MAIL_PASSWORD, port = _a.MAIL_PORT;
+var mailConfig = {
+    host: host,
+    email: email,
+    password: password,
+    port: port,
+};
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
@@ -71,16 +81,18 @@ var AuthService = /** @class */ (function () {
                         return [4 /*yield*/, bcrypt.compare(req.body.password, user.password)];
                     case 2:
                         if (_a.sent()) {
-                            accessToken = jwt.sign(user, config.auth.jwt_secret, { expiresIn: "1hr" });
+                            accessToken = jwt.sign(user, config.auth.jwt_secret, {
+                                expiresIn: "1hr",
+                            });
                             refreshToken = jwt.sign(user, config.auth.jwt_refresh);
                             refreshTokens.push(refreshToken);
                             response = {
-                                'success': true,
-                                'data': {
-                                    'status': 'LoggedIn',
-                                    'accessToken': accessToken,
-                                    'refreshToken': refreshToken
-                                }
+                                success: true,
+                                data: {
+                                    status: "LoggedIn",
+                                    accessToken: accessToken,
+                                    refreshToken: refreshToken,
+                                },
                             };
                             res.send(response);
                         }
@@ -109,7 +121,6 @@ var AuthService = /** @class */ (function () {
                             mobile_no: Joi.string(),
                         });
                         error = schema.validate(req.body).error;
-                        console.log(req.body);
                         return [4 /*yield*/, bcrypt.hash(req.body.password, 10)];
                     case 1:
                         hashedPassword = _a.sent();
@@ -121,11 +132,11 @@ var AuthService = /** @class */ (function () {
                         };
                         users.push(user);
                         response = {
-                            'success': true,
-                            'data': {
-                                'status': 'SignedIn',
-                                'link': '/login',
-                            }
+                            success: true,
+                            data: {
+                                status: "SignedIn",
+                                link: "/login",
+                            },
                         };
                         res.status(201).send(response);
                         return [3 /*break*/, 3];
@@ -135,6 +146,68 @@ var AuthService = /** @class */ (function () {
                         res.status(500).send();
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthService.logout = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var auth, tokenFromHeader, user;
+            return __generator(this, function (_a) {
+                auth = new auth_1.Auth();
+                tokenFromHeader = auth.getTokenFromHeader(req);
+                user = jwt.decode(tokenFromHeader);
+                refreshTokens = refreshTokens.filter(function (token) { return token !== tokenFromHeader; });
+                res.sendStatus(204);
+                return [2 /*return*/];
+            });
+        });
+    };
+    AuthService.users = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                res.send(users);
+                return [2 /*return*/];
+            });
+        });
+    };
+    AuthService.forgotPassword = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var testAccount, transporter, mailObj, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, nodemailer.createTestAccount()];
+                    case 1:
+                        testAccount = _a.sent();
+                        transporter = nodemailer.createTransport({
+                            host: "smtp.ethereal.email",
+                            port: 587,
+                            secure: false,
+                            auth: {
+                                user: testAccount.user,
+                                pass: testAccount.pass,
+                            },
+                        });
+                        return [4 /*yield*/, transporter.sendMail({
+                                from: '"Fred Foo " ,<foo@blurdybloop.com>',
+                                to: "" + req.body.email,
+                                subject: "Hello ✔",
+                                text: "Hello world?",
+                                html: "<b>Hello world?</b>",
+                            })];
+                    case 2:
+                        mailObj = _a.sent();
+                        // cons = await nodemailer.createTransport(transObj);
+                        console.log("Message sent: %s", mailObj.messageId);
+                        res.send();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_1 = _a.sent();
+                        console.log(err_1);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
