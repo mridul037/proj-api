@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
     "prod": "tsc && node ./build/app.js",
-    "start": "npm run tsc ",
+    "start": "npm run tsc && node build/server/app.js ",
     "run": "node build/app.js"
   },
   "author": "",

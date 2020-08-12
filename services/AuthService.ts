@@ -12,19 +12,9 @@ import { any } from "joi";
 
 const users: any = [];
 let refreshTokens: Array<string> = [];
-const {
-  MAIL_HOST: host,
-  MAIL_EMAIL: email,
-  MAIL_PASSWORD: password,
-  MAIL_PORT: port,
-} = process.env;
 
-const mailConfig = {
-  host,
-  email,
-  password,
-  port,
-};
+
+
 
 export class AuthService {
   constructor() {}
@@ -36,10 +26,10 @@ export class AuthService {
     }
     try {
       const schema = Joi.object({
-        name: Joi.string().required(),
+       
         email: Joi.string().required(),
         password: Joi.string(),
-        mobile_no: Joi.string(),
+        
       });
       const { error } = schema.validate(req.body);
       console.log(config);
@@ -56,9 +46,10 @@ export class AuthService {
             status: "LoggedIn",
             accessToken: accessToken,
             refreshToken: refreshToken,
+            link:'/home'
           },
         };
-        res.send(response);
+        res.json(response);
       }
 
       //requestHandler.validateJoi(error,400,'bad request',error?error.details[0].message:'');
@@ -92,13 +83,13 @@ export class AuthService {
         success: true,
         data: {
           status: "SignedIn",
-          link: "/login",
+          link: "/pages/login",
         },
       };
-      res.status(201).send(response);
+      res.status(201).json(response);
     } catch (error) {
       console.log(error);
-      res.status(500).send();
+      res.status(500).json();
     }
   }
 
@@ -116,29 +107,36 @@ export class AuthService {
 
   static async forgotPassword(req: any, res: any) {
     try {
-      let testAccount = await nodemailer.createTestAccount();
+     
+     
       let transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
+        host:  config.mailConfig.host,
+        port: config.mailConfig.port,
         secure: false, // true for 465, false for other ports
         auth: {
-          user: testAccount.user, // generated ethereal user
-          pass: testAccount.pass, // generated ethereal password
+          user: config.mailConfig.email, // generated ethereal user
+          pass: config.mailConfig.password, // generated ethereal password
         },
       });
-
+       let receiver:string=`${req.body.email}`
       const mailObj = await transporter.sendMail({
-        from: '"Fred Foo " ,<foo@blurdybloop.com>', // sender address
-        to: `${req.body.email}`, // list of receivers
+        from: 'wadmarket@thecodebucket.com', // sender address
+        to: receiver, // list of receivers
         subject: "Hello ✔", // Subject line
         text: "Hello world?", // plain text body
         html: "<b>Hello world?</b>", // html body
       });
 
       // cons = await nodemailer.createTransport(transObj);
-
+     const response={
+       success:true,
+       data:{
+         link:'/login'
+       }
+     }
       console.log("Message sent: %s", mailObj.messageId);
-      res.send();
+      res.json(response);
+      
     } catch (err) {
       console.log(err);
     }

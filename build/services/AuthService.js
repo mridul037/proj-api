@@ -47,13 +47,6 @@ var nodemailer = require("nodemailer");
 var auth_1 = require("../utils/auth");
 var users = [];
 var refreshTokens = [];
-var _a = process.env, host = _a.MAIL_HOST, email = _a.MAIL_EMAIL, password = _a.MAIL_PASSWORD, port = _a.MAIL_PORT;
-var mailConfig = {
-    host: host,
-    email: email,
-    password: password,
-    port: port,
-};
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
@@ -71,10 +64,8 @@ var AuthService = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         schema = Joi.object({
-                            name: Joi.string().required(),
                             email: Joi.string().required(),
                             password: Joi.string(),
-                            mobile_no: Joi.string(),
                         });
                         error = schema.validate(req.body).error;
                         console.log(config);
@@ -92,9 +83,10 @@ var AuthService = /** @class */ (function () {
                                     status: "LoggedIn",
                                     accessToken: accessToken,
                                     refreshToken: refreshToken,
+                                    link: '/home'
                                 },
                             };
-                            res.send(response);
+                            res.json(response);
                         }
                         return [3 /*break*/, 4];
                     case 3:
@@ -135,15 +127,15 @@ var AuthService = /** @class */ (function () {
                             success: true,
                             data: {
                                 status: "SignedIn",
-                                link: "/login",
+                                link: "/pages/login",
                             },
                         };
-                        res.status(201).send(response);
+                        res.status(201).json(response);
                         return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
-                        res.status(500).send();
+                        res.status(500).json();
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -173,41 +165,44 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.forgotPassword = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var testAccount, transporter, mailObj, err_1;
+            var transporter, receiver, mailObj, response, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, nodemailer.createTestAccount()];
-                    case 1:
-                        testAccount = _a.sent();
+                        _a.trys.push([0, 2, , 3]);
                         transporter = nodemailer.createTransport({
-                            host: "smtp.ethereal.email",
-                            port: 587,
+                            host: config.mailConfig.host,
+                            port: config.mailConfig.port,
                             secure: false,
                             auth: {
-                                user: testAccount.user,
-                                pass: testAccount.pass,
+                                user: config.mailConfig.email,
+                                pass: config.mailConfig.password,
                             },
                         });
+                        receiver = "" + req.body.email;
                         return [4 /*yield*/, transporter.sendMail({
-                                from: '"Fred Foo " ,<foo@blurdybloop.com>',
-                                to: "" + req.body.email,
+                                from: 'wadmarket@thecodebucket.com',
+                                to: receiver,
                                 subject: "Hello ✔",
                                 text: "Hello world?",
                                 html: "<b>Hello world?</b>",
                             })];
-                    case 2:
+                    case 1:
                         mailObj = _a.sent();
-                        // cons = await nodemailer.createTransport(transObj);
+                        response = {
+                            success: true,
+                            data: {
+                                link: '/login'
+                            }
+                        };
                         console.log("Message sent: %s", mailObj.messageId);
-                        res.send();
-                        return [3 /*break*/, 4];
-                    case 3:
+                        res.json(response);
+                        return [3 /*break*/, 3];
+                    case 2:
                         err_1 = _a.sent();
                         console.log(err_1);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
