@@ -52,7 +52,12 @@ export class HomeService {
     }catch(err){
        res.status(500).send();
     }
-
+   
  }
+
+
+
+ 
+ 
 
 }

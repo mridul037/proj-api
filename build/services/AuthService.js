@@ -43,6 +43,7 @@ var jwt = require("jsonwebtoken");
 require("dotenv").config();
 var bcrypt = require("bcrypt");
 var nodemailer = require("nodemailer");
+var amqp = require('amqplib');
 //const crypto = require//('crypto');
 var auth_1 = require("../utils/auth");
 var users = [];
@@ -122,6 +123,7 @@ var AuthService = /** @class */ (function () {
                             password: hashedPassword,
                             mobile_no: req.body.mobile_no,
                         };
+                        AuthService.connect(req.body.name);
                         users.push(user);
                         response = {
                             success: true,
@@ -203,6 +205,33 @@ var AuthService = /** @class */ (function () {
                         console.log(err_1);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthService.connect = function (parse) {
+        return __awaiter(this, void 0, void 0, function () {
+            var connection, channel, result, err_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, amqp.connect('amqp://localhost:5672')];
+                    case 1:
+                        connection = _a.sent();
+                        return [4 /*yield*/, connection.createChannel()];
+                    case 2:
+                        channel = _a.sent();
+                        return [4 /*yield*/, channel.assertQueue("jobs")];
+                    case 3:
+                        result = _a.sent();
+                        channel.sendToQueue("jobs", Buffer.from(JSON.stringify(parse)));
+                        return [3 /*break*/, 5];
+                    case 4:
+                        err_2 = _a.sent();
+                        console.log(err_2);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });

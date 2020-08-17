@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+
 //const crypto = require//('crypto');
 
 import { Auth } from "../utils/auth";
@@ -77,7 +78,7 @@ export class AuthService {
         password: hashedPassword,
         mobile_no: req.body.mobile_no,
       };
-
+    
       users.push(user);
       const response = {
         success: true,
@@ -141,4 +142,7 @@ export class AuthService {
       console.log(err);
     }
   }
+  
+  
 }
+

@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomeService = void 0;
 var Joi = require("joi");
 var config = require("../config/appconfig");
+var amqp = require('amqplib');
 var HomeService = /** @class */ (function () {
     function HomeService() {
     }
@@ -83,6 +84,35 @@ var HomeService = /** @class */ (function () {
                     res.status(500).send();
                 }
                 return [2 /*return*/];
+            });
+        });
+    };
+    HomeService.username = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var connection, channel, result, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, amqp.connect('amqp://localhost:5672')];
+                    case 1:
+                        connection = _a.sent();
+                        return [4 /*yield*/, connection.createChannel()];
+                    case 2:
+                        channel = _a.sent();
+                        return [4 /*yield*/, channel.assertQueue("jobs")];
+                    case 3:
+                        result = _a.sent();
+                        channel.consume("jobs", function (parse) {
+                            console.log(parse.content.toString());
+                        });
+                        return [3 /*break*/, 5];
+                    case 4:
+                        err_1 = _a.sent();
+                        console.log(err_1);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
+                }
             });
         });
     };
