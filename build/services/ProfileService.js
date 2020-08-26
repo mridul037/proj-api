@@ -36,62 +36,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HomeService = void 0;
-var Joi = require("joi");
+exports.ProfileService = void 0;
 var config = require("../config/appconfig");
-var HomeService = /** @class */ (function () {
-    function HomeService() {
+var getQuery = require("../config/connection").getQuery;
+var auth_1 = require("../utils/auth");
+var jwt = require("jsonwebtoken");
+var ProfileService = /** @class */ (function () {
+    function ProfileService() {
     }
-    HomeService.banner = function (req, res) {
+    ProfileService.getProfile = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var banner;
+            var auth, tokenFromHeader, user, response_1;
             return __generator(this, function (_a) {
                 try {
-                    banner = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/home-office-desktop.jpg?tr=w-1280",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/uv-sterilizer-desktop-02.jpg?tr=w-1280",
-                        },
-                    ];
-                    res.json({
+                    auth = new auth_1.Auth();
+                    tokenFromHeader = auth.getTokenFromHeader(req);
+                    user = jwt.decode(tokenFromHeader);
+                    response_1 = {
                         success: true,
-                        image: banner,
-                    });
+                        data: {
+                            name: user.name,
+                            email: user.email,
+                            mobile_no: user.mobile_no
+                        }
+                    };
+                    res.json(response_1);
+                    console.log(user);
                 }
-                catch (err) {
-                    res.status(500).send();
+                catch (Error) {
+                    console.log(Error);
                 }
                 return [2 /*return*/];
             });
         });
     };
-    HomeService.feature = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var collections;
-            return __generator(this, function (_a) {
-                try {
-                    collections = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                    ];
-                    res.json({
-                        success: true,
-                        image: collections,
-                    });
-                }
-                catch (err) {
-                    res.status(500).send();
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    return HomeService;
+    return ProfileService;
 }());
-exports.HomeService = HomeService;
+exports.ProfileService = ProfileService;

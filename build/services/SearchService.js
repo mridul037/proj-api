@@ -65,15 +65,15 @@ var SearchService = /** @class */ (function () {
                             response_1 = {
                                 success: true,
                                 data: {
-                                    list: CategoryList_1
-                                }
+                                    list: CategoryList_1,
+                                },
                             };
                             res.json(response_1);
                         }
                         else {
                             res.status(200).send({
                                 status: false,
-                                message: 'Category not found',
+                                message: "Category not found",
                             });
                         }
                         return [3 /*break*/, 3];
@@ -95,7 +95,7 @@ var SearchService = /** @class */ (function () {
                         _a.trys.push([0, 4, , 5]);
                         if (!(req.body.ID !== undefined)) return [3 /*break*/, 2];
                         id = req.body.ID;
-                        return [4 /*yield*/, getQuery('SELECT * FROM `category` WHERE Parent_category_ID=' + id)];
+                        return [4 /*yield*/, getQuery("SELECT * FROM `category` WHERE Parent_category_ID=" + id)];
                     case 1:
                         subCategoryItem = _a.sent();
                         console.log(subCategoryItem);
@@ -111,8 +111,8 @@ var SearchService = /** @class */ (function () {
                         response_2 = {
                             success: true,
                             data: {
-                                list: subCategoryList_1
-                            }
+                                list: subCategoryList_1,
+                            },
                         };
                         res.json(response_2);
                         return [3 /*break*/, 3];
@@ -120,8 +120,8 @@ var SearchService = /** @class */ (function () {
                         res.json({
                             success: true,
                             data: {
-                                list: []
-                            }
+                                list: [],
+                            },
                         });
                         _a.label = 3;
                     case 3: return [3 /*break*/, 5];

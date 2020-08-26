@@ -36,62 +36,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HomeService = void 0;
-var Joi = require("joi");
+exports.CategoryService = void 0;
+var getQuery = require("../config/connection").getQuery;
 var config = require("../config/appconfig");
-var HomeService = /** @class */ (function () {
-    function HomeService() {
+var CategoryService = /** @class */ (function () {
+    function CategoryService() {
     }
-    HomeService.banner = function (req, res) {
+    CategoryService.Category = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var banner;
+            var id, category, error_1;
             return __generator(this, function (_a) {
-                try {
-                    banner = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/home-office-desktop.jpg?tr=w-1280",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/uv-sterilizer-desktop-02.jpg?tr=w-1280",
-                        },
-                    ];
-                    res.json({
-                        success: true,
-                        image: banner,
-                    });
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        if (!(req.body.ID !== undefined)) return [3 /*break*/, 2];
+                        id = req.body.ID;
+                        return [4 /*yield*/, getQuery("SELECT * FROM `category` WHERE Parent_category_ID=10")];
+                    case 1:
+                        category = _a.sent();
+                        res.json({
+                            success: true,
+                            data: {
+                                list: category,
+                            },
+                        });
+                        return [3 /*break*/, 3];
+                    case 2:
+                        res.json();
+                        _a.label = 3;
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
+                        error_1 = _a.sent();
+                        res.status(500).send(error_1);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
-                catch (err) {
-                    res.status(500).send();
-                }
-                return [2 /*return*/];
             });
         });
     };
-    HomeService.feature = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var collections;
-            return __generator(this, function (_a) {
-                try {
-                    collections = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                    ];
-                    res.json({
-                        success: true,
-                        image: collections,
-                    });
-                }
-                catch (err) {
-                    res.status(500).send();
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    return HomeService;
+    return CategoryService;
 }());
-exports.HomeService = HomeService;
+exports.CategoryService = CategoryService;

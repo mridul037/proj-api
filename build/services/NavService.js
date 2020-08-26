@@ -36,62 +36,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HomeService = void 0;
-var Joi = require("joi");
+exports.NavService = void 0;
 var config = require("../config/appconfig");
-var HomeService = /** @class */ (function () {
-    function HomeService() {
+var getQuery = require("../config/connection").getQuery;
+var NavService = /** @class */ (function () {
+    function NavService() {
     }
-    HomeService.banner = function (req, res) {
+    NavService.navbar = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var banner;
+            var categoryItem, CategoryList_1, response_1, err_1;
             return __generator(this, function (_a) {
-                try {
-                    banner = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/home-office-desktop.jpg?tr=w-1280",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/top-slider/uv-sterilizer-desktop-02.jpg?tr=w-1280",
-                        },
-                    ];
-                    res.json({
-                        success: true,
-                        image: banner,
-                    });
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, getQuery("SELECT * FROM `category` WHERE Parent_category_ID=0")];
+                    case 1:
+                        categoryItem = _a.sent();
+                        if (categoryItem) {
+                            CategoryList_1 = [];
+                            categoryItem.map(function (item) {
+                                var Name = item.Name, ID = item.ID;
+                                var obj = {
+                                    path: '',
+                                    theme: Name,
+                                    type: 'link'
+                                };
+                                CategoryList_1.push(obj);
+                            });
+                            response_1 = {
+                                success: true,
+                                data: {
+                                    list: CategoryList_1,
+                                },
+                            };
+                            res.json(response_1);
+                        }
+                        else {
+                            res.status(200).send({
+                                status: false,
+                                message: "Category not found",
+                            });
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_1 = _a.sent();
+                        console.log(err_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
-                catch (err) {
-                    res.status(500).send();
-                }
-                return [2 /*return*/];
             });
         });
     };
-    HomeService.feature = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var collections;
-            return __generator(this, function (_a) {
-                try {
-                    collections = [
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                        {
-                            image: "https://ik.imagekit.io/dailyobjects/assets/images/homepage/desktop/banner/homepage-mid/tote-bags-01.jpg?tr=w-700",
-                        },
-                    ];
-                    res.json({
-                        success: true,
-                        image: collections,
-                    });
-                }
-                catch (err) {
-                    res.status(500).send();
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
-    return HomeService;
+    return NavService;
 }());
-exports.HomeService = HomeService;
+exports.NavService = NavService;
